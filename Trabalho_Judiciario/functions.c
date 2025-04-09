@@ -351,12 +351,20 @@ void MoreThanSubjects(char *arq_csv){
     }
 }
 
+
+int isLeapYear(int year){
+    return ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0);
+}
+
 void processTime(char *arq_csv){
     PROCESSO *process = readFile(arq_csv);
+
     PROCESSO *aux_process = (PROCESSO *)malloc(sizeof(PROCESSO));
 
     int id_aux;
+
     printf("Digite o ID do processo:\n");
+
     scanf("%d", &id_aux);
 
     //Procurando processo por ID
@@ -367,17 +375,33 @@ void processTime(char *arq_csv){
         }
     }
 
-    printf("teste: %d,%s,%s,%s,%s,%d\n", aux_process->id, aux_process->num, aux_process->dt_ajm, aux_process->id_cls, aux_process->id_ass, aux_process->ano_elc);
-
     //Coletando dados de tempo do dispositivo
     time_t tnow;
+    
     struct tm *dataNow, dataProcess;
 
     time(&tnow);
+
     dataNow = localtime(&tnow);
 
     //Coletando dados de tempo do processo
     sscanf(aux_process->dt_ajm,"%d-%d-%d %d:%d:%d", &dataProcess.tm_year, &dataProcess.tm_mon, &dataProcess.tm_mday, &dataProcess.tm_hour, &dataProcess.tm_min, &dataProcess.tm_sec);
+    
+    dataProcess.tm_year -= 1900;
+    
+    dataProcess.tm_mon  -= 1;
 
-    printf("teste data: %d-%d-%d %d:%d:%d\n", dataProcess.tm_year, dataProcess.tm_mon, dataProcess.tm_mday, dataProcess.tm_hour, dataProcess.tm_min, dataProcess.tm_sec);
+    time_t processSeconds = mktime(&dataProcess);
+
+    time_t nowSeconds = mktime(dataNow);
+
+    double diference = difftime(nowSeconds, processSeconds);
+
+    time_t diffTime = (time_t) diference;
+
+    struct tm *duration = gmtime(&diffTime);
+
+    duration->tm_year = duration->tm_year - 70;
+
+    printf("O tempo de tramitacao e de:\nAnos:%d\nMeses:%d\nDias:%d\nHoras:%02d\nMinutos:%02d\nSegundos:%02d", duration->tm_year, duration->tm_mon, duration->tm_mday, duration->tm_hour, duration->tm_min, duration->tm_sec );
 }
