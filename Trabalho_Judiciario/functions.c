@@ -351,11 +351,6 @@ void MoreThanSubjects(char *arq_csv){
     }
 }
 
-
-int isLeapYear(int year){
-    return ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0);
-}
-
 void processTime(char *arq_csv){
     PROCESSO *process = readFile(arq_csv);
 
